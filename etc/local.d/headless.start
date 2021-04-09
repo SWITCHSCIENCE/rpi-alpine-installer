@@ -1,0 +1,97 @@
+#!/bin/sh
+
+__create_eni()
+{
+	cat <<-EOF > /etc/network/interfaces
+	auto lo
+	iface lo inet loopback
+
+	auto ${iface}
+	iface ${iface} inet dhcp
+	        hostname ${hostname}
+	EOF
+}
+
+__create_eww()
+{
+	cat <<-EOF > /etc/wpa_supplicant/wpa_supplicant.conf
+	ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+	update_config=1
+	country=JP
+	network={
+	        ssid="${ssid}"
+	        psk="${psk}"
+	}
+	EOF
+}
+
+__edit_ess()
+{
+	cat <<-EOF >> /etc/ssh/sshd_config
+	PermitRootLogin yes
+	IPQoS 0x00
+	EOF
+}
+
+__find_wint()
+{
+	for dev in /sys/class/net/*
+	do
+		if [ -e "${dev}"/wireless -o -e "${dev}"/phy80211 ]
+		then
+			echo "${dev##*/}"
+		fi
+	done
+}
+
+ovlpath=$(find /media -name *.apkovl.tar.gz -exec dirname {} \; | head -n1)
+read ssid psk < "${ovlpath}/wifi.txt"
+
+if [ ${ssid} ]
+then
+  iface=$(__find_wint)
+  apk add wpa_supplicant
+  __create_eww
+  rc-service wpa_supplicant start
+else
+  iface="eth0"
+fi
+
+hostname=raspberrypi
+setup-hostname ${hostname}
+hostname ${hostname}
+__create_eni
+rc-service networking start
+
+/sbin/setup-sshd -c openssh
+__edit_ess
+install -m 700 -d /root/.ssh
+install -m 600 /dev/null /root/.ssh/authorized_keys
+if [ -e "${ovlpath}/authorized_keys" ]
+then
+	cat "${ovlpath}/authorized_keys" >> /root/.ssh/authorized_keys
+fi
+rc-service sshd restart
+
+setup-ntp -c chrony
+setup-apkrepos -1
+setup-lbu mmcblk0p1
+setup-apkcache /media/mmcblk0p1/cache
+apk add rng-tools dbus avahi
+rc-update add rngd boot
+rc-update add wpa_supplicant boot
+rc-update add urandom boot
+rc-update add dbus
+rc-update add avahi-daemon
+rc-service rngd start
+rc-service wpa_supplicant start
+rc-service urandom start
+rc-service dbus start
+rc-service avahi-daemon start
+mount -o remount,rw ${ovlpath}
+rm ${ovlpath}/*.apkovl.tar.gz
+rm ${ovlpath}/wifi.txt
+rm ${ovlpath}/authorized_keys
+rc-update del local default
+lbu add /root/.ssh/authorized_keys
+lbu commit -d
