@@ -43,7 +43,10 @@ rpi-alpine-installer -version=v3.13.4 -arch=armhf \
 finalize script running message:
 
 ```
-* Starting local ...   [ok]
+* Starting firstboot ... [ ok ]
+* Starting local ...     [ ok ]
+
+Welcome to Alpine Linux 3.13
 ```
 
 ```
@@ -65,4 +68,4 @@ Restore:
 1. microSD card format for FAT32 with label 'ALPINE'.
 2. `git clone ...`
 3. Change dir. into repos: `cd ...`
-4. export file into microSD card volume: `git archive main | tar x -C /Volumes/ALPINE`
+4. export file into microSD card volume: `git archive main | tar xv -C /Volumes/ALPINE`
