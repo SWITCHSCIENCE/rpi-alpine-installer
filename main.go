@@ -78,7 +78,7 @@ func addAuthorizedKeysText(dist, keys string) error {
 func makeURL(arch, version string) string {
 	major := strings.Join(strings.Split(version, ".")[0:2], ".")
 	version = strings.TrimPrefix(version, "v")
-	return fmt.Sprintf("https://dl-cdn.alpinelinux.org/alpine/%s/releases/aarch64/alpine-rpi-%s-%s.tar.gz", major, version, arch)
+	return fmt.Sprintf("https://dl-cdn.alpinelinux.org/alpine/%s/releases/%s/alpine-rpi-%s-%s.tar.gz", major, arch, version, arch)
 }
 
 func writeItem(fpath string, r io.Reader) error {
