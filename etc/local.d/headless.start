@@ -74,6 +74,7 @@ fi
 rc-service sshd restart
 
 setup-ntp -c chrony
+chronyc -a makestep
 setup-apkrepos -1
 setup-lbu mmcblk0p1
 setup-apkcache /media/mmcblk0p1/cache

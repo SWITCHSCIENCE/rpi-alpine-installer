@@ -1,5 +1,7 @@
 # rpi-alpine-installer
 
+alpine-linux installer(for just 1 minute!)
+
 ## Tool Install
 
 ```
@@ -35,3 +37,32 @@ rpi-alpine-installer -version=v3.13.4 -arch=armhf \
 	-authorized_keys=keys \
 	-dist=/Volumes/ALPINE
 ```
+
+## First boot & SSH login
+
+finalize script running message:
+
+```
+* Starting local ...   [ok]
+```
+
+```
+ssh root@raspberrypi.local
+```
+
+## Backup to GitHub and Restore from GitHub
+
+Backup:
+
+1. microSD card backup into local `dist/` folder.
+2. `dist/` folder initialize for git: `git init`.
+3. `git add .` & `got commit -am "add files"`.
+4. if you need git remote add: `git remote add origin git@github.com:...`.
+5. push to gitHub main branch: `git push -u origin main`.
+
+Restore:
+
+1. microSD card format for FAT32 with label 'ALPINE'.
+2. `git clone ...`
+3. Change dir. into repos: `cd ...`
+4. export file into microSD card volume: `git archive main | tar x -C /Volumes/ALPINE`
