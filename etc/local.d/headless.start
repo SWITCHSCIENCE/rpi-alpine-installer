@@ -57,7 +57,7 @@ else
   iface="eth0"
 fi
 
-hostname=raspberrypi
+read hostname < "${ovlpath}/hostname.txt"
 setup-hostname ${hostname}
 hostname ${hostname}
 __create_eni

@@ -22,6 +22,7 @@ var headless []byte
 var params = struct {
 	arch            string
 	version         string
+	hostname        string
 	ssid            string
 	passphrase      string
 	authorized_keys string
@@ -35,6 +36,21 @@ func addHeadlessApkVol(dist string) error {
 	}
 	defer fp.Close()
 	if _, err := fp.Write(headless); err != nil {
+		return err
+	}
+	if err := fp.Sync(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func addHostnameText(dist, hostname string) error {
+	fp, err := os.Create(filepath.Join(dist, "hostname.txt"))
+	if err != nil {
+		return err
+	}
+	defer fp.Close()
+	if _, err := fmt.Fprintf(fp, "%s\n", hostname); err != nil {
 		return err
 	}
 	if err := fp.Sync(); err != nil {
@@ -78,7 +94,7 @@ func addAuthorizedKeysText(dist, keys string) error {
 func makeURL(arch, version string) string {
 	major := strings.Join(strings.Split(version, ".")[0:2], ".")
 	version = strings.TrimPrefix(version, "v")
-	return fmt.Sprintf("https://dl-cdn.alpinelinux.org/alpine/%s/releases/%s/alpine-rpi-%s-%s.tar.gz", major, arch, version, arch)
+	return fmt.Sprintf("https://dl-cdn.alpinelinux.org/alpine/v%s/releases/%s/alpine-rpi-%s-%s.tar.gz", major, arch, version, arch)
 }
 
 func writeItem(fpath string, r io.Reader) error {
@@ -99,6 +115,7 @@ func writeItem(fpath string, r io.Reader) error {
 func main() {
 	flag.StringVar(&params.arch, "arch", "aarch64", "target architecture armv7/armhf/aarch64")
 	flag.StringVar(&params.version, "version", "v3.13.4", "target alpinelinux version")
+	flag.StringVar(&params.hostname, "hostname", "raspberrypi", "target hostname")
 	flag.StringVar(&params.ssid, "ssid", "", "initial Wi-Fi ssid")
 	flag.StringVar(&params.passphrase, "passphrase", "", "initial Wi-Fi passphrase")
 	flag.StringVar(&params.authorized_keys, "authorized_keys", "", "initial root ssh authorized_keys")
@@ -144,6 +161,9 @@ func main() {
 		}
 	}
 	if err := addHeadlessApkVol(params.dist); err != nil {
+		log.Fatal(err)
+	}
+	if err := addHostnameText(params.dist, params.hostname); err != nil {
 		log.Fatal(err)
 	}
 	if params.ssid != "" {
