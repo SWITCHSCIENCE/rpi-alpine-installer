@@ -5,7 +5,7 @@ alpine-linux installer(for just 1 minute!)
 ## Tool Install
 
 ```
-go get github.com/144lab/rpi-alpine-installer
+go get github.com/SWITCHSCIENCE/rpi-alpine-installer
 ```
 
 ## Format micro-SD card for FAT32
