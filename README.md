@@ -22,7 +22,7 @@ for aarch64(RaspberryPi 3 or 4)
 
 ```shell
 curl https://github.com/<GitHub-UserID>.keys > keys
-rpi-alpine-installer -version=v3.13.4 -arch=aarch64 \
+rpi-alpine-installer -version=3.17.3 -arch=aarch64 \
 	-ssid=<SSID> -passphrase=<Passphrase> \
 	-authorized_keys=keys \
 	-dist=/Volumes/ALPINE
@@ -32,11 +32,13 @@ for armhf(RaspberryPi 3 or 4)
 
 ```shell
 curl https://github.com/<GitHub-UserID>.keys > keys
-rpi-alpine-installer -version=v3.13.4 -arch=armhf \
+rpi-alpine-installer -version=3.17.3 -arch=armhf \
 	-ssid=<SSID> -passphrase=<Passphrase> \
 	-authorized_keys=keys \
 	-dist=/Volumes/ALPINE
 ```
+
+for Windows: `-dist=H:\\`
 
 ## First boot & SSH login
 
@@ -46,7 +48,7 @@ finalize script running message:
 * Starting firstboot ... [ ok ]
 * Starting local ...     [ ok ]
 
-Welcome to Alpine Linux 3.13
+Welcome to Alpine Linux 3.17
 ```
 
 ```
