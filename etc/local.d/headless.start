@@ -29,7 +29,7 @@ __edit_ess()
 {
 	cat <<-EOF >> /etc/ssh/sshd_config
 	PermitRootLogin yes
-	IPQoS 0x00
+	IPQoS none
 	EOF
 }
 
@@ -63,7 +63,7 @@ hostname ${hostname}
 __create_eni
 rc-service networking start
 
-/sbin/setup-sshd -c openssh
+setup-sshd -c openssh
 __edit_ess
 install -m 700 -d /root/.ssh
 install -m 600 /dev/null /root/.ssh/authorized_keys
