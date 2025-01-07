@@ -63,7 +63,7 @@ hostname ${hostname}
 __create_eni
 rc-service networking start
 
-setup-sshd -c openssh
+/sbin/setup-sshd -c openssh
 __edit_ess
 install -m 700 -d /root/.ssh
 install -m 600 /dev/null /root/.ssh/authorized_keys
