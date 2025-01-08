@@ -76,8 +76,8 @@ rc-service sshd restart
 setup-ntp -c chrony
 chronyc -a makestep
 setup-apkrepos -1
-setup-lbu mmcblk0p1
-setup-apkcache /media/mmcblk0p1/cache
+setup-lbu $(basename ${ovlpath})
+setup-apkcache ${ovlpath}/cache
 apk add rng-tools dbus avahi
 rc-update add rngd boot
 rc-update add wpa_supplicant boot
