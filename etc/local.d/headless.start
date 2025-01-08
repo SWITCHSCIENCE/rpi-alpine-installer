@@ -65,8 +65,21 @@ hostname ${hostname}
 __create_eni
 rc-service networking start
 
-count=0
-while [ $count -lt 30 ] && ! ping -n 1 -w 1000 dl-cdn.alpinelinux.org &> /dev/null; do sleep 1; ((count++)); done; if [ $count -eq 30 ]; then echo "internet connection failed"; exit 1; fi
+MAX_TRIES=30
+for count in $(seq "$MAX_TRIES"); do
+    if ping -c 1 -W 1 dl-cdn.alpinelinux.org > /dev/null 2>&1; then
+        echo "Internet connection established"
+        break
+    fi
+    echo "try $count: ping failed..."
+		if [ "$count" -eq "$MAX_TRIES" ]; then
+			echo "Could not connect to the Internet"
+			exit 1
+		else
+  	  sleep 1
+			continue
+		fi
+done
 
 setup-sshd -c openssh
 __edit_ess
