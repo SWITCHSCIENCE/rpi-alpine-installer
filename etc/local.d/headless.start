@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 __create_eni()
 {
 	cat <<-EOF > /etc/network/interfaces
@@ -89,6 +91,8 @@ rc-service wpa_supplicant start
 rc-service urandom start
 rc-service dbus start
 rc-service avahi-daemon start
+
+# proc below if should be no errors.
 mount -o remount,rw ${ovlpath}
 rm ${ovlpath}/*.apkovl.tar.gz
 rm ${ovlpath}/wifi.txt
