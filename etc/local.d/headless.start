@@ -101,12 +101,16 @@ rc-update add rngd boot
 rc-update add wpa_supplicant boot
 rc-update add dbus
 rc-update add avahi-daemon
-rc-update add urandom boot || true
+if [ -e "/etc/init.d/urandom" ]; then
+rc-update add urandom boot
+fi
 rc-service rngd start
 rc-service wpa_supplicant start
-rc-service urandom start
 rc-service dbus start
 rc-service avahi-daemon start
+if [ -e "/etc/init.d/urandom" ]; then
+rc-service urandom start
+fi
 
 # proc below if should be no errors.
 mount -o remount,rw ${ovlpath}
